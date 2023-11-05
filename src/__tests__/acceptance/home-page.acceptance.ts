@@ -14,7 +14,7 @@ describe('HomePage', () => {
     await app.stop();
   });
 
-  it('exposes a default home page', async () => {
+  it('exposes a default home page', async () => { 
     await client
       .get('/')
       .expect(200)
