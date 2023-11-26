@@ -1,16 +1,16 @@
 import fs from "fs";
 import path from "path";
 import { SmsApplication } from "../application";
-import { CenterBranchRepository } from "../repositories/center-branch.repository";
 import { Process } from "./processes";
-const filePath = path.join(__dirname, "../../data/center-branch.csv");
+import {LevelsRepository} from '../repositories';
+const filePath = path.join(__dirname, "../../data/levels.csv");
 
-export const seedBranch: Process = {
-  name: "00100-seed-branch.ts",
+export const seedLevel: Process = {
+  name: "00100-seed-levels.ts",
   func: async (app: SmsApplication) => {
     try {
-      const centerBranchRepository = await app.getRepository(
-        CenterBranchRepository
+      const levelsRepository = await app.getRepository(
+        LevelsRepository
       );
       const csvString = fs.readFileSync(filePath, "utf-8");
       const lines = csvString.split("\n");
@@ -21,13 +21,12 @@ export const seedBranch: Process = {
           const values = line.split(",");
           const newBranch = {
             name: values[0],
-            address: values[1],
-            phoneNumber: values[2],
+            code: values[1],
           };
-          await centerBranchRepository.create(newBranch);
+          await levelsRepository.create(newBranch);
         }
       }
-      console.log("Successful branch seed");
+      console.log("Successful levels seed");
     } catch (error) {
       console.log("Fail ", error);
     }
