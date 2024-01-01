@@ -1,10 +1,4 @@
-import {
-  Count,
-  CountSchema,
-  Filter,
-  repository,
-  Where,
-} from "@loopback/repository";
+import { CountSchema, Filter, repository } from "@loopback/repository";
 import {
   del,
   get,
@@ -15,7 +9,7 @@ import {
   post,
   requestBody,
 } from "@loopback/rest";
-import { Courses, Levels } from "../models";
+import { Levels } from "../models";
 import { LevelsRepository } from "../repositories";
 
 export class LevelsCoursesController {
@@ -63,7 +57,7 @@ export class LevelsCoursesController {
     return this.levelsRepository.create(levels);
   }
 
-  @patch("/levels/{id}/courses", {
+  @patch("/levels/{id}", {
     responses: {
       "200": {
         description: "Levels.Courses PATCH success count",
@@ -76,30 +70,24 @@ export class LevelsCoursesController {
     @requestBody({
       content: {
         "application/json": {
-          schema: getModelSchemaRef(Courses, { partial: true }),
+          schema: getModelSchemaRef(Levels, { partial: true }),
         },
       },
     })
-    courses: Partial<Courses>,
-    @param.query.object("where", getWhereSchemaFor(Courses))
-    where?: Where<Courses>
-  ): Promise<Count> {
-    return this.levelsRepository.courses(id).patch(courses, where);
+    @param.query.object("where", getWhereSchemaFor(Levels))
+    where: { id: number }
+  ) {
+    return this.levelsRepository.courses(id).patch(where);
   }
 
-  @del("/levels/{id}/courses", {
+  @del("/levels/{id}", {
     responses: {
-      "200": {
-        description: "Levels.Courses DELETE success count",
-        content: { "application/json": { schema: CountSchema } },
+      "204": {
+        description: "Levels DELETE success count",
       },
     },
   })
-  async delete(
-    @param.path.number("id") id: number,
-    @param.query.object("where", getWhereSchemaFor(Courses))
-    where?: Where<Courses>
-  ): Promise<Count> {
-    return this.levelsRepository.courses(id).delete(where);
+  async delete(@param.path.number("id") id: number): Promise<void> {
+    return this.levelsRepository.deleteById(id);
   }
 }
